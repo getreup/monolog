@@ -92,7 +92,13 @@ class LogglyHandler extends AbstractProcessingHandler
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        Curl\Util::execute($ch);
+        $tagHeaders = 'X-LOGGLY-TAG: '.implode(',', $this->tag);
+        $cmd = "curl -X POST -H 'Content-Type: application/json' -H '$tagHeaders'";
+        $cmd.= " -d '" . $data . "' " . "'" . $url . "'";
+        $cmd .= " > /dev/null 2>&1 &";
+        
+        exec($cmd, $output, $exit);
+        // Curl\Util::execute($ch);
     }
 
     protected function getDefaultFormatter()
